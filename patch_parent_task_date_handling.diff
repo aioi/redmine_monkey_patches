@@ -1,0 +1,49 @@
+diff --git i/app/models/issue.rb w/app/models/issue.rb
+index a47e6c0..dc8b6c5 100644
+--- i/app/models/issue.rb
++++ w/app/models/issue.rb
+@@ -413,7 +413,8 @@ class Issue < ActiveRecord::Base
+     return if attrs.empty?
+ 
+     unless leaf?
+-      attrs.reject! {|k,v| %w(priority_id done_ratio start_date due_date estimated_hours).include?(k)}
++      # attrs.reject! {|k,v| %w(priority_id done_ratio start_date due_date estimated_hours).include?(k)}
++      attrs.reject! {|k,v| %w(priority_id done_ratio estimated_hours).include?(k)}
+     end
+ 
+     if attrs['parent_issue_id'].present?
+@@ -1206,11 +1207,11 @@ class Issue < ActiveRecord::Base
+       end
+ 
+       # start/due dates = lowest/highest dates of children
+-      p.start_date = p.children.minimum(:start_date)
+-      p.due_date = p.children.maximum(:due_date)
+-      if p.start_date && p.due_date && p.due_date < p.start_date
+-        p.start_date, p.due_date = p.due_date, p.start_date
+-      end
++      # p.start_date = p.children.minimum(:start_date)
++      # p.due_date = p.children.maximum(:due_date)
++      # if p.start_date && p.due_date && p.due_date < p.start_date
++      #   p.start_date, p.due_date = p.due_date, p.start_date
++      # end
+ 
+       # done ratio = weighted average ratio of leaves
+       unless Issue.use_status_for_done_ratio? && p.status && p.status.default_done_ratio
+diff --git i/app/views/issues/_attributes.html.erb w/app/views/issues/_attributes.html.erb
+index 9b4c508..49bbec4 100644
+--- i/app/views/issues/_attributes.html.erb
++++ w/app/views/issues/_attributes.html.erb
+@@ -47,11 +47,11 @@
+ <% end %>
+ 
+ <% if @issue.safe_attribute? 'start_date' %>
+-<p><%= f.text_field :start_date, :size => 10, :disabled => !@issue.leaf?, :required => @issue.required_attribute?('start_date') %><%= calendar_for('issue_start_date') if @issue.leaf? %></p>
++<p><%= f.text_field :start_date, :size => 10, :disabled => false, :required => @issue.required_attribute?('start_date') %><%= calendar_for('issue_start_date') %></p>
+ <% end %>
+ 
+ <% if @issue.safe_attribute? 'due_date' %>
+-<p><%= f.text_field :due_date, :size => 10, :disabled => !@issue.leaf?, :required => @issue.required_attribute?('due_date') %><%= calendar_for('issue_due_date') if @issue.leaf? %></p>
++<p><%= f.text_field :due_date, :size => 10, :disabled => false, :required => @issue.required_attribute?('due_date') %><%= calendar_for('issue_due_date') %></p>
+ <% end %>
+ 
+ <% if @issue.safe_attribute? 'estimated_hours' %>
