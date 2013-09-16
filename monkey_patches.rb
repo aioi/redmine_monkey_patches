@@ -1,15 +1,3 @@
-# Monkey patch Better Gantt Chart plugin to not update sub-tasks, which 
-# crashes with out patch to parent task date handling.
-module RedmineBetterGanttChart
-  module IssueDependencyPatch
-    module InstanceMethods
-      def process_child_issues(issue)
-        # noop
-      end
-    end
-  end
-end
-
 # Monkey patch the git adapter, to only return "master" or "development"
 # branches. Publishing feature and staging branches was having unintended
 # side-effects of updating issue references and statuses in Redmine.
